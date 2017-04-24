@@ -1,6 +1,6 @@
 {
   "name": "vide-plugin-mode-vue",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "vic.wang",
   "scripts": {
     "start": "babel ./src/ -d ./lib/"
