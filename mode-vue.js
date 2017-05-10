@@ -53,18 +53,20 @@ ace.define("ace/mode/vue_template_highlight_rules",["require","exports","module"
 
 var oop = require("../lib/oop");
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
+var htmlElements = ["DOCTYPE","a","abbr","acronym","address","applet","area","article","aside","audio","b","base","basefont","bdi","bdo","big","blockquote","body","br","button","canvas","caption","center","cite","code","col","colgroup","command","datalist","dd","del","details","dfn","dialog","dir","div","dl","dt","em","embed","fieldset","figcaption","figure","font","footer","form","frame","frameset","h1","h2","h3","h4","h5","h6","head","header","hr","html","i","iframe","img","input","ins","kbd","keygen","label","legend","li","link","main","map","mark","menu","menuitem","meta","meter","nav","noframes","noscript","object","ol","optgroup","option","output","p","param","pre","progress","q","rp","rt","ruby","s","samp","script","section","select","small","source","span","strike","strong","style","sub","summary","sup","table","tbody","td","textarea","tfoot","th","thead","time","title","tr","track","tt","u","ul","var","video","wbr"]
 
 var TemplateHighlightRules = function() {
     this.$rules = {
         "start" : [ 
         {
-            token: ["text","text","language.support.class"],
-            regex: /(<)(\/*)([a-z][a-z0-9]*-[a-z0-9_-]+)/,
-            next: 'attribute'
-        },
-        {
-            token: ["text","text","meta.tag.tag-name.xml"],
-            regex: /(<)(\/*)([a-z][a-z0-9]+)/,
+            token: function () {
+              if (htmlElements.indexOf(arguments[2]) !== -1) {
+                return ["text","text","meta.tag.tag-name.xml.vue-component"]
+              } else {
+                return ["text","text","language.support.class"]
+              }
+            },
+            regex: /(<)(\/*)([a-z][a-z0-9_-]*)/,
             next: 'attribute'
         },
         {
@@ -96,7 +98,7 @@ var TemplateHighlightRules = function() {
         attribute: [
             {
                 token: ["entity.other.attribute-name.xml", "keyword.operator"],
-                regex: /([a-zA-Z@:_-][\w_@:\-]*)(=)/
+                regex: /([a-zA-Z@:_-][\w_@:\-]*)(=*)/
             },
             {
                 token : "string", // single line
@@ -341,6 +343,12 @@ var VueHighlightRules = function() {
                     "entity.name.function"
                 ],
                 regex : "(function)(\\s+)(" + identifierRe + ")"
+            }, {
+                token: ["text","variable.language","text"],
+                regex: "(\\s+)(el|template|name|watch|methods|computed|components|filters|directives)(:)"
+            }, {
+                token: ["text","variable.language","text"],
+                regex: "(\\s+)(data|render|beforeCreate|created|beforeMount|mounted|beforeUpdate|activated|deactivated|beforeDestroy|destroyed)(\\s+)"
             }, {
                 token : function(value) {
                     if (value == "this")
